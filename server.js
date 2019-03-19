@@ -4,6 +4,8 @@ const { Device } = require('ps4-waker');
 
 var app = express();
 
+var gamesid = require('./gamesid.js');
+
 app.get('/ps4/status', function(req, res) {
     console.log("status");
     var opt = {
@@ -52,7 +54,7 @@ app.get('/ps4/standby', function(req, res) {
 }); 
 
 app.get('/ps4/title/:title', function(req, res) {
-    console.log("wakeup");
+    console.log("title");
     var opt = {
         debug: true
     };
@@ -61,7 +63,11 @@ app.get('/ps4/title/:title', function(req, res) {
 
     console.log(title);
 
-    ps4.startTitle(title)
+    var id = gamesid.ids[title];
+
+    console.log(gamesid);
+
+    ps4.startTitle(id)
     .then(
         data => res.status(200).send(JSON.stringify(data)),
         err => res.status(500).send(JSON.stringify(err))
@@ -70,7 +76,7 @@ app.get('/ps4/title/:title', function(req, res) {
 }); 
 
 app.get('*', function(req, res) {
-    res.status(404).send("No route found for '" + req.params);
+    res.status(404).send("No route found for '" + req.params + "'");
 });
 
 app.use(function(err, req, res, next) {
