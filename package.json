@@ -1,0 +1,16 @@
+{
+  "name": "apiberry",
+  "version": "1.0.0",
+  "description": "Api for all",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Leveque",
+  "license": "ISC",
+  "dependencies": {
+    "connect": "^3.6.6",
+    "express": "^4.16.4"
+  },
+  "repository":""
+}
