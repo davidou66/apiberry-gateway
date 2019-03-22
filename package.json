@@ -1,5 +1,5 @@
 {
-  "name": "apiberry",
+  "name": "apiberry-gateway",
   "version": "1.0.0",
   "description": "Api for all",
   "main": "server.js",
@@ -10,7 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "connect": "^3.6.6",
-    "express": "^4.16.4"
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "ask-sdk-core": "^2.0.0",
+    "ask-sdk-model": "^1.0.0",
+    "i18next": "^11.8.0",
+    "i18next-sprintf-postprocessor": "^0.2.2"
   },
-  "repository":""
+  "repository": "https://github.com/davidou66/apiberry-gateway.git"
 }

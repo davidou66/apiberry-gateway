@@ -1,82 +1,48 @@
 var fs = require('fs'),
     https = require('https'),
-    express = require('express')
-const { Device } = require('ps4-waker');
+    express = require('express');
+require('dotenv').config();
+
+/** Alexa */
+const Alexa = require('ask-sdk-core');
+const i18n = require('i18next');
+const sprintf = require('i18next-sprintf-postprocessor');
+
+/** App */
+const gamesid = require('./gamesid.js');
+const port = process.env.PORT;
+const env = process.env.NODE_ENV;
 
 var app = express();
 
-var gamesid = require('./gamesid.js');
-var port = process.env.PORT;
-var env = process.env.NODE_ENV;
-var certifOpt = {
-    key: fs.readFileSync('/etc/letsencrypt/live/moulegeek.fr/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/moulegeek.fr/cert.pem'),
+const WakeupHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+          && handlerInput.requestEnvelope.request.intent.name === 'HelloWorldIntent';
+      },
+      handle(handlerInput) {
+        const speechText = 'Hello World!';
+    
+        return handlerInput.responseBuilder
+          .speak(speechText)
+          .withSimpleCard('Hello World', speechText)
+          .getResponse();
+      }
 };
 
-app.get('/ps4/status', function(req, res) {
+app.post('/', function(req, res) {
+    console.log(req, res);
+});
+
+app.get('/', function(req, res) {
     console.log("status");
-    var opt = {
-        timeout: 200,
-        debug: true
-    };
-    var ps4 = new Device(opt);
 
-    ps4.getDeviceStatus()
-    .then(      
-        data => res.status(200).send(data),
-        err => res.status(500).send(JSON.stringify(err))
-    )
-    .then(() => ps4.close());
-}); 
-
-app.get('/ps4/wakeup', function(req, res) {
-    console.log("wakeup");
-    var opt = {
-        timeout: 200,
-        debug: true
-    };
-    var ps4 = new Device(opt);
-
-    ps4.turnOn()
-    .then(
-        data => res.status(200).send(JSON.stringify(data)),
-        err => res.status(500).send(JSON.stringify(err))
-    )
-    .then(() => ps4.close());
-}); 
-
-app.get('/ps4/standby', function(req, res) {
-    console.log("standby");
-    var opt = {
-        debug: true
-    };
-    var ps4 = new Device(opt);
-
-    ps4.turnOff()
-    .then(
-        data => res.status(200).send(JSON.stringify(data)),
-        err => res.status(500).send(JSON.stringify(err))
-    )
-    .then(() => ps4.close());
-}); 
-
-app.get('/ps4/title/:title', function(req, res) {
-    console.log("title");
-    var opt = {
-        debug: true
-    };
-    var ps4 = new Device(opt);
-
-    var title = req.params.title;
-
-    var id = gamesid.ids[title];
-
-    ps4.startTitle(id)
-    .then(
-        data => res.status(200).send(JSON.stringify(data)),
-        err => res.status(500).send(JSON.stringify(err))
-    )
-    .then(() => ps4.close());
+    // ps4.getDeviceStatus()
+    // .then(      
+    //     data => res.status(200).send(data),
+    //     err => res.status(500).send(JSON.stringify(err))
+    // )
+    // .then(() => ps4.close());
 }); 
 
 app.get('*', function(req, res) {
@@ -91,6 +57,19 @@ app.use(function(err, req, res, next) {
     }
 });
 
-var server = https.createServer(options, app).listen(port, function(){
-    console.log("Apiberry Gateway listening on port " + port);
-});
+
+if(env == "prod") {
+    var certifOpt = {
+        key: fs.readFileSync('/etc/letsencrypt/live/moulegeek.fr/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/moulegeek.fr/cert.pem'),
+    };
+
+    var server = https.createServer(options, app).listen(port, function(){
+        console.log("Apiberry Gateway listening on port " + port + " in " + env +" env");
+    });
+} else {
+    app.listen(port);
+    console.log("Apiberry Gateway listening on port " + port + " in " + env +" env");
+}
+
+
