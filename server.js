@@ -1,5 +1,5 @@
 var fs = require('fs'),
-    https = require('https'),
+    http = require('http'),
     express = require('express');
 require('dotenv').config();
 
@@ -12,38 +12,42 @@ const sprintf = require('i18next-sprintf-postprocessor');
 const gamesid = require('./gamesid.js');
 const port = process.env.PORT;
 const env = process.env.NODE_ENV;
+const urlWaker = process.env.URL_WAKER;
+const portWaker = process.env.PORT_WAKER;
 
 var app = express();
 
-const WakeupHandler = {
-    canHandle(handlerInput) {
-        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-          && handlerInput.requestEnvelope.request.intent.name === 'HelloWorldIntent';
-      },
-      handle(handlerInput) {
-        const speechText = 'Hello World!';
-    
-        return handlerInput.responseBuilder
-          .speak(speechText)
-          .withSimpleCard('Hello World', speechText)
-          .getResponse();
-      }
-};
-
+/**
+ * Receive the post query from lambda function
+ * 
+ */
 app.post('/', function(req, res) {
-    console.log(req, res);
+    console.log(req.body);
+    http.get(urlWaker + ":" + portWaker + '/ps4/' + req.body.uri, (resp) => {
+        let data = '';
+    
+        // A chunk of data has been recieved.
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+    
+        // The whole response has been received. Print out the result.
+        resp.on('end', () => {
+            console.log(JSON.parse(data).explanation);
+            data +=  ": " + JSON.parse(data).explanation;
+
+            
+            res.status(200).send(data);
+        });
+
+    }).on("error", (err) => {
+        console.log("Error: " + err.message);
+        data += ": " + err.message;
+        
+        res.status(500).send(data);
+    });
+    
 });
-
-app.get('/', function(req, res) {
-    console.log("status");
-
-    // ps4.getDeviceStatus()
-    // .then(      
-    //     data => res.status(200).send(data),
-    //     err => res.status(500).send(JSON.stringify(err))
-    // )
-    // .then(() => ps4.close());
-}); 
 
 app.get('*', function(req, res) {
     res.status(404).send("No route found for '" + req.params + "'");
