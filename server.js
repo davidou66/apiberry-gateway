@@ -1,10 +1,17 @@
-var http = require('http');
-var express = require('express');
+var fs = require('fs'),
+    https = require('https'),
+    express = require('express')
 const { Device } = require('ps4-waker');
 
 var app = express();
 
 var gamesid = require('./gamesid.js');
+var port = process.env.PORT;
+var env = process.env.NODE_ENV;
+var certifOpt = {
+    key: fs.readFileSync('/etc/letsencrypt/live/moulegeek.fr/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/moulegeek.fr/cert.pem'),
+};
 
 app.get('/ps4/status', function(req, res) {
     console.log("status");
@@ -16,7 +23,7 @@ app.get('/ps4/status', function(req, res) {
 
     ps4.getDeviceStatus()
     .then(      
-        data => res.status(200).send(JSON.stringify(data)),
+        data => res.status(200).send(data),
         err => res.status(500).send(JSON.stringify(err))
     )
     .then(() => ps4.close());
@@ -59,13 +66,10 @@ app.get('/ps4/title/:title', function(req, res) {
         debug: true
     };
     var ps4 = new Device(opt);
+
     var title = req.params.title;
 
-    console.log(title);
-
     var id = gamesid.ids[title];
-
-    console.log(gamesid);
 
     ps4.startTitle(id)
     .then(
@@ -87,5 +91,6 @@ app.use(function(err, req, res, next) {
     }
 });
 
-app.listen(3000);
-console.log('App Server running at port 3000');
+var server = https.createServer(options, app).listen(port, function(){
+    console.log("Apiberry Gateway listening on port " + port);
+});
