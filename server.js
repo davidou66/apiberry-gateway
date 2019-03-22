@@ -64,7 +64,7 @@ if(env == "prod") {
         cert: fs.readFileSync('/etc/letsencrypt/live/moulegeek.fr/cert.pem'),
     };
 
-    var server = https.createServer(options, app).listen(port, function(){
+    var server = https.createServer(certifOpt, app).listen(port, function(){
         console.log("Apiberry Gateway listening on port " + port + " in " + env +" env");
     });
 } else {
