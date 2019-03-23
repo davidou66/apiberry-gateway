@@ -21,8 +21,8 @@ var app = express();
  * Receive the post query from lambda function
  * 
  */
-app.post('/', function(req, res) {
-    console.log(req.body);
+app.get('/api', function(req, res) {
+    console.log(req.params);
     http.get(urlWaker + ":" + portWaker + '/ps4/' + req.body.uri, (resp) => {
         let data = '';
     
