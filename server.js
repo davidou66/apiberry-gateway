@@ -22,7 +22,7 @@ var app = express();
  * 
  */
 app.get('/api', function(req, res) {
-    console.log(req.params);
+    console.log(req.query, req.params.query);
     http.get(urlWaker + ":" + portWaker + '/ps4/' + req.body.uri, (resp) => {
         let data = '';
     
