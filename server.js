@@ -22,8 +22,8 @@ var app = express();
  * 
  */
 app.get('/api', function(req, res) {
-    console.log(req.query, req.params.query);
-    http.get(urlWaker + ":" + portWaker + '/ps4/' + req.body.uri, (resp) => {
+    console.log(req.query);
+    http.get(urlWaker + ":" + portWaker + '/ps4/' + req.query.route, (resp) => {
         let data = '';
     
         // A chunk of data has been recieved.
@@ -36,7 +36,6 @@ app.get('/api', function(req, res) {
             console.log(JSON.parse(data).explanation);
             data +=  ": " + JSON.parse(data).explanation;
 
-            
             res.status(200).send(data);
         });
 
