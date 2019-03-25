@@ -3,11 +3,6 @@ var fs = require('fs'),
     express = require('express');
 require('dotenv').config();
 
-/** Alexa */
-const Alexa = require('ask-sdk-core');
-const i18n = require('i18next');
-const sprintf = require('i18next-sprintf-postprocessor');
-
 /** App */
 const gamesid = require('./gamesid.js');
 const port = process.env.PORT;
@@ -22,7 +17,7 @@ var app = express();
  * 
  */
 app.get('/api', function(req, res) {
-    console.log(req.query);
+    console.log(req.query.route);
     http.get(urlWaker + ":" + portWaker + '/ps4/' + req.query.route, (resp) => {
         let data = '';
     
