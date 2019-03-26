@@ -17,10 +17,10 @@ var app = express();
  * 
  */
 app.get('/api', function(req, res) {
-    console.log(req.query.route);
+    console.log(req.query);
+
+    let data = '';
     http.get(urlWaker + ":" + portWaker + '/ps4/' + req.query.route, (resp) => {
-        let data = '';
-    
         // A chunk of data has been recieved.
         resp.on('data', (chunk) => {
             data += chunk;
