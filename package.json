@@ -1,7 +1,7 @@
 {
   "name": "apiberry-gateway",
   "version": "1.0.0",
-  "description": "Api for all",
+  "description": "API Gateway for alexa and PS4-Waker",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

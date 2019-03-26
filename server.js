@@ -4,7 +4,6 @@ var fs = require('fs'),
 require('dotenv').config();
 
 /** App */
-const gamesid = require('./gamesid.js');
 const port = process.env.PORT;
 const env = process.env.NODE_ENV;
 const urlWaker = process.env.URL_WAKER;
@@ -29,7 +28,7 @@ app.get('/api', function(req, res) {
     
         // The whole response has been received. Print out the result.
         resp.on('end', () => {
-            console.log(data);
+            console.log("Success: " + data);
             data +=  ": " + data;
 
             res.status(200).send(data);
