@@ -29,8 +29,8 @@ app.get('/api', function(req, res) {
     
         // The whole response has been received. Print out the result.
         resp.on('end', () => {
-            console.log(JSON.parse(data).explanation);
-            data +=  ": " + JSON.parse(data).explanation;
+            console.log(data);
+            data +=  ": " + data;
 
             res.status(200).send(data);
         });
@@ -54,7 +54,7 @@ function makeUrl(queryObj){
 
     url += urlWaker + ':' + portWaker + '/ps4/' + queryObj.route;
     if (queryObj.params) {
-        url += queryObj.params.title;
+        url += '/' + queryObj.params.title;
     }
 
     console.log("Url to call: " + url);
@@ -63,6 +63,7 @@ function makeUrl(queryObj){
 }
 
 app.get('*', function(req, res) {
+    console.log("No route found")
     res.status(404).send("No route found for '" + makeUrl(req.query) + "'");
 });
 
