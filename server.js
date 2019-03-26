@@ -20,7 +20,8 @@ app.get('/api', function(req, res) {
     console.log(req.query);
 
     let data = '';
-    http.get(urlWaker + ":" + portWaker + '/ps4/' + req.query.route, (resp) => {
+
+    http.get(makeUrl(req.query), (resp) => {
         // A chunk of data has been recieved.
         resp.on('data', (chunk) => {
             data += chunk;
@@ -43,8 +44,26 @@ app.get('/api', function(req, res) {
     
 });
 
+/**
+ * Construct url from .env and query parameters
+ * 
+ * @param {} queryObj 
+ */
+function makeUrl(queryObj){
+    let url = "";
+
+    url += urlWaker + ':' + portWaker + '/ps4/' + queryObj.route;
+    if (queryObj.params) {
+        url += queryObj.params.title;
+    }
+
+    console.log("Url to call: " + url);
+
+    return url;
+}
+
 app.get('*', function(req, res) {
-    res.status(404).send("No route found for '" + req.params + "'");
+    res.status(404).send("No route found for '" + makeUrl(req.query) + "'");
 });
 
 app.use(function(err, req, res, next) {
